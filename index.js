@@ -1,10 +1,11 @@
+import dotenv from 'dotenv'
+dotenv.config()
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import cookieParser from 'cookie-parser'
-import dotenv from 'dotenv'
 import router from './router/index.js'
-dotenv.config()
+
 
 const app = express();
 

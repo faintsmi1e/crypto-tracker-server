@@ -6,6 +6,7 @@ import TokenService from './token-service.js';
 import UserDto from '../dtos/user-dto.js';
 class UserServise {
   async registration(email, password) {
+    console.log('1')
     const candidate = await UserModel.findOne({ email });
     if (candidate) {
       throw new Error(`User ${email} exists`);
@@ -18,7 +19,7 @@ class UserServise {
       password: hashPassword,
       activationLink,
     });
-    await MailService.sendActivationMail(email, `${process.env.API_URL}/api/activate${activationLink}`);
+    await MailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activationLink}`);
 
     const userDto = new UserDto(user); // id, email., isActivated
     const tokens = TokenService.generateTokens({ ...userDto });
@@ -28,6 +29,15 @@ class UserServise {
       ...tokens,
       user: userDto,
     };
+  }
+
+  async activate(activationLink) {
+    const user = await UserModel.findOne({activationLink});
+    if (!user) {
+      throw new Error('wrong activation link');
+    }
+    user.isActivated = true;
+    await user.save();
   }
 }
 
