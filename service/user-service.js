@@ -2,6 +2,7 @@ import UserModel from "../models/user-model";
 import bcrypt from 'bcrypt';
 import uuid from 'uuid'
 import MailService from "./mail-service";
+import TokenService from "./token-service";
 class UserServise {
   async registration(email, password) {
     const candidate = await UserModel.findOne({email});
