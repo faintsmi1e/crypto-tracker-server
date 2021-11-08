@@ -4,12 +4,12 @@ import * as uuid from 'uuid';
 import MailService from './mail-service.js';
 import TokenService from './token-service.js';
 import UserDto from '../dtos/user-dto.js';
+import ApiError from '../exceptions/api-error.js';
 class UserServise {
   async registration(email, password) {
-    console.log('1')
     const candidate = await UserModel.findOne({ email });
     if (candidate) {
-      throw new Error(`User ${email} exists`);
+      throw ApiError.BadRequest(`User ${email} exists`);
     }
     const hashPassword = await bcrypt.hash(password, 3);
     const activationLink = uuid.v4();
@@ -34,7 +34,7 @@ class UserServise {
   async activate(activationLink) {
     const user = await UserModel.findOne({activationLink});
     if (!user) {
-      throw new Error('wrong activation link');
+      throw ApiError.BadRequest('wrong activation link');
     }
     user.isActivated = true;
     await user.save();
