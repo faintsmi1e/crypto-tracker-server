@@ -6,6 +6,7 @@ import MailService from './mail-service.js';
 import TokenService from './token-service.js';
 import UserDto from '../dtos/user-dto.js';
 import ApiError from '../exceptions/api-error.js';
+import TransactionService from './transaction-service.js';
 class UserServise {
   async registration(email, password) {
     const candidate = await UserModel.findOne({ email });
@@ -33,7 +34,6 @@ class UserServise {
       ...tokens,
       user: userDto,
     };
-    
   }
 
   async activate(activationLink) {
@@ -57,17 +57,17 @@ class UserServise {
     const userDto = new UserDto(user);
     const tokens = TokenService.generateTokens({ ...userDto });
     await TokenService.saveToken(userDto.id, tokens.refreshToken);
-
+    const transactions = TransactionService.getAll(userDto.id);
     return {
       ...tokens,
       user: userDto,
+      transactions: transactions,
     };
   }
 
-  async logout(refreshToken) { 
+  async logout(refreshToken) {
     const token = await TokenService.removeToken(refreshToken);
     return token;
-
   }
   async refresh(refreshToken) {
     if (!refreshToken) {
@@ -82,11 +82,13 @@ class UserServise {
     const user = await UserModel.findById(userData.id);
     const userDto = new UserDto(user); // id, email., isActivated
     const tokens = TokenService.generateTokens({ ...userDto });
+    const transactions = TransactionService.getAll(userDto.id);
     await TokenService.saveToken(userDto.id, tokens.refreshToken);
 
     return {
       ...tokens,
       user: userDto,
+      transactions: transactions,
     };
   }
 
