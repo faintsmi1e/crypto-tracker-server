@@ -3,7 +3,9 @@ import TransactionService from "../service/transaction-service.js";
   class TransactionController {
     async getTransactions(req, res, next) {
       try {
-        const {userId} = req.params
+        
+        const userId = req.params.id
+        console.log(userId)
         const transactions = await TransactionService.getAll(userId);
         return res.json(transactions);
       } catch (e) {
