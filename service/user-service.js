@@ -82,9 +82,9 @@ class UserServise {
     const user = await UserModel.findById(userData.id);
     const userDto = new UserDto(user); // id, email., isActivated
     const tokens = TokenService.generateTokens({ ...userDto });
-    const transactions = TransactionService.getAll(userDto.id);
+    const transactions = await TransactionService.getAll(userDto.id);
     await TokenService.saveToken(userDto.id, tokens.refreshToken);
-
+    
     return {
       ...tokens,
       user: userDto,
