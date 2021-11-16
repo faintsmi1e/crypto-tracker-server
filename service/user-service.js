@@ -33,6 +33,7 @@ class UserServise {
     return {
       ...tokens,
       user: userDto,
+      transactions:[]
     };
   }
 
@@ -57,7 +58,8 @@ class UserServise {
     const userDto = new UserDto(user);
     const tokens = TokenService.generateTokens({ ...userDto });
     await TokenService.saveToken(userDto.id, tokens.refreshToken);
-    const transactions = TransactionService.getAll(userDto.id);
+    const transactions = await TransactionService.getAll(userDto.id);
+    console.log(transactions);
     return {
       ...tokens,
       user: userDto,
@@ -84,7 +86,7 @@ class UserServise {
     const tokens = TokenService.generateTokens({ ...userDto });
     const transactions = await TransactionService.getAll(userDto.id);
     await TokenService.saveToken(userDto.id, tokens.refreshToken);
-    
+
     return {
       ...tokens,
       user: userDto,
@@ -97,5 +99,6 @@ class UserServise {
     return users;
   }
 }
+
 
 export default new UserServise();
